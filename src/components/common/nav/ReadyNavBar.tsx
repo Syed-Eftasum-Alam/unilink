@@ -1,5 +1,4 @@
 'use client'
-import { useState, useRef } from 'react'
 import { useRetrieveUserQuery } from '@/redux/features/authApiSlice'
 import { AiOutlineHome, AiOutlineLogout } from 'react-icons/ai'
 import { RiAdminLine } from 'react-icons/ri'
@@ -8,6 +7,18 @@ import { NavItem } from '@/components/common/nav/NavItem'
 import { useAppSelector, useAppDispatch } from '@/redux/hooks'
 import { useLogoutMutation } from '@/redux/features/authApiSlice'
 import { logout as setLogout } from '@/redux/features/authSlice'
+import { UserType } from '@/enums'
+import { FiUser } from 'react-icons/fi'
+import { AiOutlineUserAdd } from 'react-icons/ai'
+
+const userTypes = {
+  1: 'Site Admin',
+  2: 'University Admin',
+  3: 'Moderator',
+  4: 'Faculty',
+  5: 'Representatives',
+  6: 'Student',
+}
 
 const ReadyNavBar = () => {
   const { data: user, isLoading, isFetching } = useRetrieveUserQuery()
@@ -25,8 +36,17 @@ const ReadyNavBar = () => {
   }
   return (
     <Navbar>
+      {user && isAuthenticated && (
+        <div className="pb-6 pl-3">
+          <h1 className="text-lg">
+            {user?.first_name + ' ' + user?.last_name}
+          </h1>
+          <h2 className="text-sm">{user?.email}</h2>
+          <h2 className="text-xs">{userTypes[user.user_type]}</h2>
+        </div>
+      )}
       <NavItem to="/" name="Home" icon={AiOutlineHome} />
-      {isAuthenticated && user?.user_type == 0 && (
+      {isAuthenticated && user?.user_type == UserType.SITE_ADMIN && (
         <>
           <NavItem
             to="/l/admin/site/dashboard"
@@ -45,8 +65,41 @@ const ReadyNavBar = () => {
           />
         </>
       )}
-      {isAuthenticated && (
+      {isAuthenticated && user?.user_type == UserType.UNIVERSITY_ADMIN && (
+        <>
+          <NavItem
+            to="/l/admin/university/dashboard"
+            name="Admin Dashboard"
+            icon={RiAdminLine}
+          />
+          <NavItem
+            to="/l/admin/university/course"
+            name="Manage Course"
+            icon={RiAdminLine}
+          />
+          <NavItem
+            to="/l/admin/university/department"
+            name="Manage Department"
+            icon={RiAdminLine}
+          />
+          <NavItem
+            to="/l/admin/university/faculty"
+            name="Manage Faculty"
+            icon={RiAdminLine}
+          />
+        </>
+      )}
+      {isAuthenticated ? (
         <NavItem name="Logout" icon={AiOutlineLogout} onClick={handleLogout} />
+      ) : (
+        <>
+          <NavItem name="Login" icon={FiUser} to="/nl/auth/login" />
+          <NavItem
+            name="Registration"
+            icon={AiOutlineUserAdd}
+            to="/nl/auth/register"
+          />
+        </>
       )}
     </Navbar>
   )

@@ -15,7 +15,7 @@ const sectionApiSlice = apiSlice.injectEndpoints({
 		retrieveSections: builder.query<Section[], number>({
             query: (course_id) => `/course/sections/?course_id=${course_id}`,
         }),
-        retrieveSection: builder.query<Section[], number>({
+        retrieveSection: builder.query<Section, number>({
             query: section_id => `/course/section/?section_id=${section_id}`,
         }),
 		registerSection: builder.mutation<Section, { name: string; trimester: string, course_id: number }>({
@@ -26,8 +26,8 @@ const sectionApiSlice = apiSlice.injectEndpoints({
         query: ({ name, trimester, course_id }) => returnObject('update', { name, trimester, course_id }),
             transformResponse: (response: any) => response,
 		}),
-		addFacultyToSection: builder.mutation<Section, { course_id: number, faculty_id: number }>({
-        query: ({ course_id, faculty_id }) => returnObject('add-faculty', { course_id, faculty_id }),
+		addFacultyToSection: builder.mutation<Section, { section_id: number, faculty_id: number }>({
+        query: ({ section_id, faculty_id }) => returnObject('add-faculty', { section_id, faculty_id }),
             transformResponse: (response: any) => response,
 		}),
 		deleteSection: builder.mutation({
@@ -35,15 +35,22 @@ const sectionApiSlice = apiSlice.injectEndpoints({
 				returnObject('delete', { section_id })
 			)
 		}),
+		removeUser: builder.mutation({
+			query: ({ section_id, user_id }) => (
+				returnObject('remove-user', { section_id, user_id })
+			)
+		}),
 	}),
 });
 
 export const {
 	useRetrieveSectionsQuery,
+	useRetrieveSectionQuery,
 	useRegisterSectionMutation,
 	useUpdateSectionMutation,
 	useAddFacultyToSectionMutation,
 	useDeleteSectionMutation,
+	useRemoveUserMutation,
 } = sectionApiSlice;
 
 

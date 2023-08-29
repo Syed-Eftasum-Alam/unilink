@@ -1,5 +1,6 @@
 import { apiSlice } from '../services/apiSlice';
-import { University } from '@/types';
+import { University, User } from '@/types';
+import { useEffect } from 'react';
 
 const returnObject = (endpoint: string, params: any) => {
 	return {
@@ -21,9 +22,22 @@ const universityApiSlice = apiSlice.injectEndpoints({
 		retrieveApprovedUniversity: builder.query<University[], void>({
 			query: () => '/university/approved/',
 		}),
+        retrieveFacultyList: builder.query<User[], void>({
+            query: () => '/university/faculty-list/',
+        }),
 		registerUniversity: builder.mutation({
-			query: ({ name, domain, admin: { first_name, last_name, username, email } }) => (
-				returnObject('create', { name, domain, admin: { first_name, last_name, username, email } })
+			query: ({ name, domain, doc_url, admin: { first_name, last_name, username, email } }) => (
+				returnObject('create', { name, domain, doc_url, admin: { first_name, last_name, username, email } })
+			)
+		}),
+		registerFaculty: builder.mutation({
+			query: ({ first_name, last_name, username, email }) => (
+				returnObject('add-faculty', { first_name, last_name, username, email })
+			)
+		}),
+		deleteFaculty: builder.mutation({
+			query: ({ faculty_id }) => (
+				returnObject('remove-faculty', { faculty_id })
 			)
 		}),
 		approve: builder.mutation({
@@ -45,9 +59,29 @@ export const {
 	useRetrievePublicUniversityQuery,
 	useRetrievePendingUniversityQuery,
 	useRetrieveApprovedUniversityQuery,
+	useRetrieveFacultyListQuery,
 	useRegisterUniversityMutation,
+	useRegisterFacultyMutation,
+	useDeleteFacultyMutation,
 	useApproveMutation,
 	useDisapproveMutation,
 	useBanMutation,
 	useUnbanMutation,
 } = universityApiSlice;
+
+// realtime faculty list
+export const useRealTimeFacultyListUpdates = () => {
+	const retrieveFacultyListQuery = useRetrieveFacultyListQuery();
+	const { data: departments, isLoading, isError } = retrieveFacultyListQuery;
+
+	useEffect(() => {
+	  const pollInterval = setInterval(() => {
+		retrieveFacultyListQuery.refetch(); // Fetch updated course data
+	  }, 5000); // Poll every 5 seconds
+  
+	  return () => clearInterval(pollInterval); // Clear interval on component unmount
+	}, [retrieveFacultyListQuery]);
+  
+	return { facultyList: departments, isLoading, isError };
+};
+

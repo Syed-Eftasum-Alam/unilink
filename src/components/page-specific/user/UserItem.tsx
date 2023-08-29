@@ -4,7 +4,10 @@ import IconButton from '@mui/material/IconButton'
 import { AiFillDelete } from 'react-icons/ai'
 import { useMutation } from '@/hooks'
 import { Section } from '@/types'
-import { useDeleteSectionMutation } from '@/redux/features/sectionApiSlice'
+import {
+  useDeleteSectionMutation,
+  useRemoveUserMutation,
+} from '@/redux/features/sectionApiSlice'
 import Link from 'next/link'
 
 interface Props {
@@ -16,8 +19,8 @@ const SectionItem = ({ item, onDelete }: Props) => {
   const section = item
 
   const { deleteOnAction } = useMutation(
-    useDeleteSectionMutation,
-    { section_id: section.id },
+    useRemoveUserMutation,
+    { section_id: section.id, user_id: item.id },
     'delete',
   )
 

@@ -1,46 +1,36 @@
-'use client';
+'use client'
 
-import { useRetrieveUserQuery } from '@/redux/features/authApiSlice';
-import { List, Spinner } from '@/components/common';
+import React from 'react'
+import CategoryList from '@/components/page-specific/forum/CategoryList'
+import Post from '@/components/page-specific/forum/Post'
+import ForumList from '@/components/page-specific/forum/ForumList'
+import { useRetrieveAllForumPostQuery } from '@/redux/features/forumApiSlice'
 
-export default function Page() {
-	const { data: user, isLoading, isFetching } = useRetrieveUserQuery();
+const Dashboard = () => {
+  const { data: forumPosts, isLoading } = useRetrieveAllForumPostQuery()
 
-	const config = [
-		{
-			label: 'First Name',
-			value: user?.first_name,
-		},
-		{
-			label: 'Last Name',
-			value: user?.last_name,
-		},
-		{
-			label: 'Email',
-			value: user?.email,
-		},
-	];
+  return (
+    <div className="flex h-screen border-t-[1px] border-gray-200">
+      {/* <!-- Category List (Left Pane) --> */}
+      <CategoryList />
 
-	if (isLoading || isFetching) {
-		return (
-			<div className='flex justify-center my-8'>
-				<Spinner lg />
-			</div>
-		);
-	}
+      {/* <!-- Posts (Middle Pane) --> */}
+      <div className="w-1/2 bg-white border-r border-gray-100 p-4">
+        <div className="h-full flex flex-col gap-5 overflow-y-scroll scrollbar-hide">
+          {/* <!-- Post Messages Here --> */}
+          {forumPosts?.map((post) => (
+            <Post key={post.id} post={post} />
+          ))}
+          {/* <!-- Post Messages Here --> */}
+        </div>
+      </div>
 
-	return (
-		<>
-			<header className='bg-white shadow'>
-				<div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8'>
-					<h1 className='text-3xl font-bold tracking-tight text-gray-900'>
-						Dashboard
-					</h1>
-				</div>
-			</header>
-			<main className='mx-auto max-w-7xl py-6 my-8 sm:px-6 lg:px-8'>
-				<List config={config} />
-			</main>
-		</>
-	);
+      {/* <!-- Space for Something on Right (Right Pane) --> */}
+      <div className="w-1/4 bg-gray-200 p-1">
+        <ForumList />
+      </div>
+    </div>
+  )
 }
+
+export default Dashboard

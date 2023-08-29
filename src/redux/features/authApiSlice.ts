@@ -6,6 +6,9 @@ const authApiSlice = apiSlice.injectEndpoints({
 		retrieveUser: builder.query<User, void>({
 			query: () => '/users/me/',
 		}),
+		retrieveUserById: builder.query<User, number>({
+			query: (user_id) => `/user/?user_id=${user_id}`,
+		}),
 		login: builder.mutation({
 			query: ({ email, password }) => ({
 				url: '/jwt/create/',
@@ -19,13 +22,14 @@ const authApiSlice = apiSlice.injectEndpoints({
 				last_name,
 				username,
 				university,
+				department,
 				email,
 				password,
 				re_password,
 			}) => ({
 				url: '/users/',
 				method: 'POST',
-				body: { first_name, last_name, username, university, email, password, re_password },
+				body: { first_name, last_name, username, university, department, email, password, re_password },
 			}),
 		}),
 		verify: builder.mutation({
@@ -66,6 +70,7 @@ const authApiSlice = apiSlice.injectEndpoints({
 
 export const {
 	useRetrieveUserQuery,
+	useRetrieveUserByIdQuery,
 	useLoginMutation,
 	useRegisterMutation,
 	useVerifyMutation,

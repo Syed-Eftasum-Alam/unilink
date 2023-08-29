@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { RegisterForm } from '@/components/forms'
+import UniversityRegistrationForm from '@/components/forms/UniversityRegistrationForm'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function Page() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <RegisterForm />
+        <UniversityRegistrationForm />
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Already have an account?{' '}
@@ -27,15 +27,6 @@ export default function Page() {
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >
             Login here
-          </Link>
-        </p>
-        <p className="mt-10 text-center text-sm text-gray-500">
-          Want to register your university?{' '}
-          <Link
-            href="/nl/auth/register/university"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >
-            Register here
           </Link>
         </p>
       </div>
